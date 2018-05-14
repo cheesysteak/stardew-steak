@@ -1,0 +1,10 @@
+﻿{
+  "Name": "MoreMultiplayerInfo",
+  "Author": "cheesysteak",
+  "Version": "1.0.0",
+  "Description": "Displays helpful information about the other players on the farm.",
+  "UniqueID": "cheesysteak.moremultiplayerinfo",
+  "EntryDll": "moremultiplayerinfo.dll",
+  "MinimumApiVersion": "2.6-beta",
+  "UpdateKeys": [ "nexus:2173" ]
+}
