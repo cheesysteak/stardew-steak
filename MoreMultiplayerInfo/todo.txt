@@ -1,3 +1,0 @@
-include Last Action, and how long ago
-fix issue on save / leave / load
-preferences
