@@ -30,6 +30,7 @@ namespace MoreMultiplayerInfo
 
         private void SaveEvents_AfterLoad(object sender, System.EventArgs e)
         {
+            if (Context.IsMultiplayer)
             Game1.onScreenMenus.Add(_iconMenu);
         }
 
