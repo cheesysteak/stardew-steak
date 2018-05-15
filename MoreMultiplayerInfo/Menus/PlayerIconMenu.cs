@@ -166,7 +166,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             if (PlayerHelpers.IsPlayerOffline(player.UniqueMultiplayerID))
             {
-                text += " (offline)";
+                text += " (Offline)";
             }
 
             IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
@@ -178,7 +178,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             if (icon.WaitingIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
             {
-                var text = $"waiting {_readyCheckHandler.GetReadyCheckDisplayForPlayer(icon.PlayerId)}";
+                var text = $" (Awaiting Players)"; //{_readyCheckHandler.GetReadyCheckDisplayForPlayer(icon.PlayerId)}
                 IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
             }
         }
