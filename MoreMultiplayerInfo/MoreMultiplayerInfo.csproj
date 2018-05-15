@@ -19,7 +19,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\SteamApps\steamapps\common\Stardew Valley\Mods\MoreMultiplayerInfo\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,7 +52,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Netcode">
-      <HintPath>D:\SteamApps\steamapps\common\Stardew Valley\Netcode.dll</HintPath>
+      <HintPath>..\..\..\..\SteamGames\steamapps\common\Stardew Valley\Netcode.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
