@@ -25,10 +25,14 @@ namespace MoreMultiplayerInfo
             _iconMenu = new PlayerIconMenu(_readyCheckHandler, monitor, helper);
 
             _iconMenu.PlayerIconClicked += PlayerIconClicked;
-
-            Game1.onScreenMenus.Add(_iconMenu);
+            StardewModdingAPI.Events.SaveEvents.AfterLoad += SaveEvents_AfterLoad;
         }
 
+        private void SaveEvents_AfterLoad(object sender, System.EventArgs e)
+        {
+            Game1.onScreenMenus.Add(_iconMenu);
+        }
+        
         private void PlayerIconClicked(object sender, PlayerIconClickedArgs input)
         {
             var player = PlayerHelpers.GetPlayerWithUniqueId(input.PlayerId);
