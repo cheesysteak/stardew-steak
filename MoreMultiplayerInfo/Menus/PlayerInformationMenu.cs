@@ -259,7 +259,7 @@ namespace MoreMultiplayerInfo
                 case "BathHouse_MensLocker":
                     return "Bath House";
                 case "BathHouse_Entry":
-                    return "Bath House";
+                    return "Bath House Entrance";
                 case "WizardHouse":
                     return "Wizard's Tower";
                 case "AdventureGuild":
