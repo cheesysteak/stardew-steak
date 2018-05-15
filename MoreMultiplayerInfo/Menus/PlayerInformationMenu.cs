@@ -114,7 +114,7 @@ namespace MoreMultiplayerInfo
 
             var xPos = xPositionOnScreen + (Width / 2) - (titleWidth / 2);
 
-            b.DrawString(font, text, new Vector2(xPos - 4, this.yPositionOnScreen + 25), Color.Black);
+            b.DrawString(font, text, new Vector2(xPos, this.yPositionOnScreen + 25), Color.Black);
         }
 
         private void DrawBackground(SpriteBatch b)
