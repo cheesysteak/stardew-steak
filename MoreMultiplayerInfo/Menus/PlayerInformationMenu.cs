@@ -6,6 +6,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
+using System.Text.RegularExpressions;
 
 namespace MoreMultiplayerInfo
 {
