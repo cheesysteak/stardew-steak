@@ -6,6 +6,7 @@ using StardewModdingAPI.Events;
 using StardewValley;
 using StardewValley.Menus;
 using System;
+using System.Text.RegularExpressions;
 
 namespace MoreMultiplayerInfo
 {
@@ -51,7 +52,7 @@ namespace MoreMultiplayerInfo
             this.xPositionOnScreen = Xposition;
             this.yPositionOnScreen = Yposition;
         }
-        
+
         public override void draw(SpriteBatch b)
         {
             Game1.mouseCursor = 0;
@@ -77,7 +78,7 @@ namespace MoreMultiplayerInfo
 
         private void DrawHealth(SpriteBatch b)
         {
-            var healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina, new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
+            var healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int)Player.Stamina, Player.maxStamina, new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
             healthBar.draw(b);
         }
 
@@ -91,7 +92,7 @@ namespace MoreMultiplayerInfo
         {
             var yPos = _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing;
 
-            var text = $"Location: {Player.currentLocation.Name}";
+            var text = $"Location: {GetFriendlyLocationName(Player.currentLocation.Name)} ";
 
             var font = Game1.smallFont;
 
@@ -105,15 +106,15 @@ namespace MoreMultiplayerInfo
 
         private void DrawTitle(SpriteBatch b)
         {
-            var text = $"{Player.Name}'s info";
+            var text = $"{Player.Name}'s Info";
 
             var font = Game1.dialogueFont;
 
             var titleWidth = font.MeasureString(text).X;
 
-            var xPos = xPositionOnScreen + (Width / 2) - (titleWidth /2);
+            var xPos = xPositionOnScreen + (Width / 2) - (titleWidth / 2);
 
-            b.DrawString(font, text, new Vector2(xPos, this.yPositionOnScreen + 25), Color.Black);
+            b.DrawString(font, text, new Vector2(xPos - 4, this.yPositionOnScreen + 25), Color.Black);
         }
 
         private void DrawBackground(SpriteBatch b)
@@ -127,14 +128,14 @@ namespace MoreMultiplayerInfo
         {
             if (!string.IsNullOrEmpty(HoverText))
             {
-                IClickableMenu.drawToolTip(b, HoverText, HoverText, HoveredItem);
+                IClickableMenu.drawToolTip(b, HoveredItem.getDescription(), HoverText, HoveredItem);
             }
         }
-        
+
 
         private void DrawInventory(SpriteBatch b)
         {
-            _inventory = new InventoryMenu(this.xPositionOnScreen + 25, this.yPositionOnScreen + 100, false, Player.Items)
+            _inventory = new InventoryMenu(this.xPositionOnScreen + 38, this.yPositionOnScreen + 100, false, Player.Items)
             {
                 showGrayedOutSlots = true
             };
@@ -164,12 +165,10 @@ namespace MoreMultiplayerInfo
                 if (c.containsPoint(x, y))
                 {
                     var item = _inventory.getItemFromClickableComponent(c);
-                    if (item != null)
-                    {
-                        HoverText = $"{item.Name} x {item.Stack}";
-
-                        HoveredItem = item;
-                    }
+                    if (item == null)
+                        continue;
+                    HoveredItem = item;
+                    HoverText = $"{item.Name}";
                 }
             }
         }
@@ -190,6 +189,102 @@ namespace MoreMultiplayerInfo
 
             Game1.onScreenMenus.Remove(this);
             GraphicsEvents.Resize -= Resize;
+        }
+
+        private string GetFriendlyLocationName(string locationName)
+        {
+            Regex regex = new Regex(@"\d+$");
+            if (regex.IsMatch(locationName)) {
+                if (locationName.Contains("UndergroundMine"))
+                return "Floor " + regex.Match(locationName) + " of " + "Mountain Mines";
+                else
+                return "Floor " + regex.Match(locationName) + " of " + "Skull Cavern";
+            }
+            switch (locationName)
+            {
+                case "UndergroundMine":
+                    return "Mountain Mines Entrance";
+                case "BusStop":
+                    return "Bus Stop";
+                case "ArchaeologyHouse":
+                    return "Archaeology Office";
+                case "SeedShop":
+                    return "General Store";
+                case "JoshHouse":
+                    return "1 River Road";
+                case "ManorHouse":
+                    return "Mayor's Manor";
+                case "HaleyHouse":
+                    return "2 Willow Lane";
+                case "SamHouse":
+                    return "1 Willow Lane";
+                case "Town":
+                    return "Pelican Town";
+                case "FarmHouse":
+                    return "Farm House";
+                case "Farm":
+                    return Game1.player.farmName.Value + " Farm";
+                case "Cabin":
+                    return "Farm Cabin";
+                case "Tent":
+                    return "Mountain Tent";
+                case "CommunityCenter":
+                    return "Community Center";
+                case "WizardHouseBasement":
+                    return "Wizard Tower Basement";
+                case "WitchHut":
+                    return "Witch Hut";
+                case "WitchSwamp":
+                    return "Witch Swamp";
+                case "WitchWarpCave":
+                    return "Witch Warp Cave";
+                case "Greenhouse":
+                    return "Farm Greenhouse";
+                case "FarmCave":
+                    return "Farm Cave";
+                case "Coop":
+                    return "Farm Coop";
+                case "Barn":
+                    return "Farm Barn";
+                case "SkullCave":
+                    return "Skull Cavern Entrance";
+                case "SandyHouse":
+                    return "Oasis";
+                case "BathHouse_Pool":
+                    return "Bath House Pool";
+                case "BathHouse_WomensLocker":
+                    return "Bath House";
+                case "BathHouse_MensLocker":
+                    return "Bath House";
+                case "BathHouse_Entry":
+                    return "Bath House Entrance";
+                case "WizardHouse":
+                    return "Wizard's Tower";
+                case "AdventureGuild":
+                    return "Adventurer's Guild";
+                case "ScienceHouse":
+                    return "Carpenter's Shop";
+                case "SebastianRoom":
+                    return "Sebastian's Room";
+                case "LeahHouse":
+                    return "Leah's Cottage";
+                case "FishShop":
+                    return "Fishing Shop";
+                case "Hospital":
+                    return "Harvey's Clinic";
+                case "Saloon":
+                    return "Stardrop Saloon";
+                case "JojaMart":
+                    return "Joja Mart";
+                case "AnimalShop":
+                    return "Marnie's Ranch";
+                case "Woods":
+                    return "Secret Woods";
+                case "Forest":
+                    return "Cindersap Forest";
+                default:
+                    return locationName;
+            }
         }
     }
 }

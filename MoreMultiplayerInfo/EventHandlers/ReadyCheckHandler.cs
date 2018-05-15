@@ -148,7 +148,7 @@ namespace MoreMultiplayerInfo
             switch (readyCheckName)
             {
                 case "festivalStart":
-                    return "for the Festival";
+                    return "for " + Game1.CurrentEvent.FestivalName;
                 case "festivalEnd":
                     return "to leave";
                 case "sleep":

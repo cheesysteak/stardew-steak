@@ -119,7 +119,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         private void DrawPlayerIcons()
         {
-            if (Game1.eventUp) return; /* Don't draw during festivals or events */
+            if (Game1.eventUp || !Context.IsWorldReady) return; /* Don't draw during festivals or events */
 
             foreach (var icon in Icons)
             {
@@ -137,7 +137,6 @@ namespace MoreMultiplayerInfo.EventHandlers
                 if (PlayerHelpers.IsPlayerOffline(icon.PlayerId))
                 {
                     DrawOfflineIcon(icon);
-                    
                 }
 
 
@@ -160,27 +159,22 @@ namespace MoreMultiplayerInfo.EventHandlers
             Game1.mouseCursor = 5;
         }
 
-        private static void DrawHoverTextForPlayer(Farmer player)
+        private void DrawHoverTextForPlayer(Farmer player)
         {
             var text = player.Name;
 
             if (PlayerHelpers.IsPlayerOffline(player.UniqueMultiplayerID))
             {
-                text += " (offline)";
+                text += " (Offline)";
             }
-
+            else if (_readyCheckHandler.IsPlayerWaiting(player.UniqueMultiplayerID))
+                text += " (Awaiting Players)";
             IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
         }
 
         private void DrawWaitingIcon(PlayerIcon icon)
         {
             icon.WaitingIcon.draw(Game1.spriteBatch);
-
-            if (icon.WaitingIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-            {
-                var text = $"waiting {_readyCheckHandler.GetReadyCheckDisplayForPlayer(icon.PlayerId)}";
-                IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
-            }
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)
