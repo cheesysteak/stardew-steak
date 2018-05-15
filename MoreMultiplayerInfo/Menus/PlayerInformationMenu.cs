@@ -106,7 +106,7 @@ namespace MoreMultiplayerInfo
 
         private void DrawTitle(SpriteBatch b)
         {
-            var text = $"{Player.Name}'s info";
+            var text = $"{Player.Name}'s Info";
 
             var font = Game1.dialogueFont;
 
