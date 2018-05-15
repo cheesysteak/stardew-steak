@@ -202,8 +202,6 @@ namespace MoreMultiplayerInfo
             }
             switch (locationName)
             {
-                case "UndergroundMine":
-                    return "Mountain Mines Entrance";
                 case "BusStop":
                     return "Bus Stop";
                 case "ArchaeologyHouse":
@@ -248,6 +246,8 @@ namespace MoreMultiplayerInfo
                     return "Farm Barn";
                 case "SkullCave":
                     return "Skull Cavern Entrance";
+                case "UndergroundMine":
+                    return "Mountain Mines Entrance";
                 case "SandyHouse":
                     return "Oasis";
                 case "BathHouse_Pool":
