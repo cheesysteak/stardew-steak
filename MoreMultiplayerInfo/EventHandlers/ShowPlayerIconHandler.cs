@@ -32,7 +32,7 @@ namespace MoreMultiplayerInfo
         {
             Game1.onScreenMenus.Add(_iconMenu);
         }
-        
+
         private void PlayerIconClicked(object sender, PlayerIconClickedArgs input)
         {
             var player = PlayerHelpers.GetPlayerWithUniqueId(input.PlayerId);
