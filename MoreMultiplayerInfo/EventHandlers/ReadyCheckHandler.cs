@@ -80,7 +80,7 @@ namespace MoreMultiplayerInfo
 
                 if (removedCheck != null && removedCheck != "wakeup")
                 {
-                    _helper.SelfInfoMessage($"{playerName} is no longer ready {GetFriendlyReadyCheckName(newCheck)}.");
+                    _helper.SelfInfoMessage($"{playerName} is no longer ready {GetFriendlyReadyCheckName(removedCheck)}.");
                 }
             }
         }
