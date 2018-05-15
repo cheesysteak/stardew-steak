@@ -247,7 +247,9 @@ namespace MoreMultiplayerInfo
                 case "Barn":
                     return "Farm Barn";
                 case "SkullCave":
-                    return "Skull Cavern";
+                    return "Skull Cavern Entrance";
+                case "UndergroundMine":
+                    return "Mountain Mines Entrance";
                 case "SandyHouse":
                     return "Oasis";
                 case "BathHouse_Pool":
