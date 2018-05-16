@@ -11,6 +11,50 @@ namespace MoreMultiplayerInfo.Helpers
     public class LocationHelper
     {
 
+        static Dictionary<string, string> Locations => new Dictionary<string, string>
+        {
+            { "AdventureGuild", "Adventurer's Guild" },
+            { "AnimalShop", "Marnie's Ranch" },
+            { "ArchaeologyHouse", "Archaeology Office" },
+            { "Barn", "Farm Barn" },
+            { "BathHouse_Entry", "Bath House Entrance" },
+            { "BathHouse_MensLocker", "Bath House" },
+            { "BathHouse_Pool", "Bath House Pool" },
+            { "BathHouse_WomensLocker", "Bath House" },
+            { "BusStop", "Bus Stop" },
+            { "Cabin", "Farm Cabin" },
+            { "CommunityCenter", "Community Center" },
+            { "Coop", "Farm Coop" },
+            { "Farm", Game1.player.farmName.Value + " Farm" },
+            { "FarmCave", "Farm Cave" },
+            { "FarmHouse", "Farm House" },
+            { "FishShop", "Fishing Shop" },
+            { "Forest", "Cindersap Forest" },
+            { "Greenhouse", "Farm Greenhouse" },
+            { "HaleyHouse", "2 Willow Lane" },
+            { "Hospital", "Harvey's Clinic" },
+            { "JojaMart", "Joja Mart" },
+            { "JoshHouse", "1 River Road" },
+            { "LeahHouse", "Leah's Cottage" },
+            { "ManorHouse", "Mayor's Manor" },
+            { "Saloon", "Stardrop Saloon" },
+            { "SamHouse", "1 Willow Lane" },
+            { "SandyHouse", "Oasis" },
+            { "ScienceHouse", "Carpenter's Shop" },
+            { "SebastianRoom", "Sebastian's Room" },
+            { "SeedShop", "General Store" },
+            { "SkullCave", "Skull Cavern Entrance" },
+            { "Tent", "Mountain Tent" },
+            { "Town", "Pelican Town" },
+            { "UndergroundMine", "Mountain Mines Entrance" },
+            { "WitchHut", "Witch Hut" },
+            { "WitchSwamp", "Witch Swamp" },
+            { "WitchWarpCave", "Witch Warp Cave" },
+            { "WizardHouse", "Wizard's Tower" },
+            { "WizardHouseBasement", "Wizard Tower Basement" },
+            { "Woods", "Secret Woods" },
+        };
+
         public static string GetFriendlyLocationName(string locationName)
         {
             Regex regex = new Regex(@"\d+$");
@@ -22,91 +66,12 @@ namespace MoreMultiplayerInfo.Helpers
                     return "Floor " + regex.Match(locationName) + " of " + "Skull Cavern";
             }
 
-            switch (locationName)
+            if (Locations.ContainsKey(locationName))
             {
-                case "BusStop":
-                    return "Bus Stop";
-                case "ArchaeologyHouse":
-                    return "Archaeology Office";
-                case "SeedShop":
-                    return "General Store";
-                case "JoshHouse":
-                    return "1 River Road";
-                case "ManorHouse":
-                    return "Mayor's Manor";
-                case "HaleyHouse":
-                    return "2 Willow Lane";
-                case "SamHouse":
-                    return "1 Willow Lane";
-                case "Town":
-                    return "Pelican Town";
-                case "FarmHouse":
-                    return "Farm House";
-                case "Farm":
-                    return Game1.player.farmName.Value + " Farm";
-                case "Cabin":
-                    return "Farm Cabin";
-                case "Tent":
-                    return "Mountain Tent";
-                case "CommunityCenter":
-                    return "Community Center";
-                case "WizardHouseBasement":
-                    return "Wizard Tower Basement";
-                case "WitchHut":
-                    return "Witch Hut";
-                case "WitchSwamp":
-                    return "Witch Swamp";
-                case "WitchWarpCave":
-                    return "Witch Warp Cave";
-                case "Greenhouse":
-                    return "Farm Greenhouse";
-                case "FarmCave":
-                    return "Farm Cave";
-                case "Coop":
-                    return "Farm Coop";
-                case "Barn":
-                    return "Farm Barn";
-                case "SkullCave":
-                    return "Skull Cavern Entrance";
-                case "UndergroundMine":
-                    return "Mountain Mines Entrance";
-                case "SandyHouse":
-                    return "Oasis";
-                case "BathHouse_Pool":
-                    return "Bath House Pool";
-                case "BathHouse_WomensLocker":
-                    return "Bath House";
-                case "BathHouse_MensLocker":
-                    return "Bath House";
-                case "BathHouse_Entry":
-                    return "Bath House Entrance";
-                case "WizardHouse":
-                    return "Wizard's Tower";
-                case "AdventureGuild":
-                    return "Adventurer's Guild";
-                case "ScienceHouse":
-                    return "Carpenter's Shop";
-                case "SebastianRoom":
-                    return "Sebastian's Room";
-                case "LeahHouse":
-                    return "Leah's Cottage";
-                case "FishShop":
-                    return "Fishing Shop";
-                case "Hospital":
-                    return "Harvey's Clinic";
-                case "Saloon":
-                    return "Stardrop Saloon";
-                case "JojaMart":
-                    return "Joja Mart";
-                case "AnimalShop":
-                    return "Marnie's Ranch";
-                case "Woods":
-                    return "Secret Woods";
-                case "Forest":
-                    return "Cindersap Forest";
-                default:
-                    return locationName;
+                return Locations[locationName];
             }
+
+            return locationName;
         }
     }
 }
