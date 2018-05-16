@@ -89,7 +89,7 @@ namespace MoreMultiplayerInfo
 
                 if (removedCheck != null && removedCheck != "wakeup" && options.ShowReadyInfoInChatBox)
                 {
-                    _helper.SelfInfoMessage($"{playerName} is no longer ready {GetFriendlyReadyCheckName(newCheck)}.");
+                    _helper.SelfInfoMessage($"{playerName} is no longer ready {GetFriendlyReadyCheckName(removedCheck)}.");
                 }
             }
         }
@@ -157,7 +157,7 @@ namespace MoreMultiplayerInfo
             switch (readyCheckName)
             {
                 case "festivalStart":
-                    return "for the Festival";
+                    return "for " + Game1.CurrentEvent.FestivalName;
                 case "festivalEnd":
                     return "to leave";
                 case "sleep":
