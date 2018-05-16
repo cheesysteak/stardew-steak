@@ -13,8 +13,6 @@ namespace MoreMultiplayerInfo
         
         private PlayerIconMenu _iconMenu;
 
-        private PlayerInformationMenu _infoMenu;
-
         public ShowPlayerIconHandler(IMonitor monitor, IModHelper helper)
         {
             _monitor = monitor;

@@ -14,6 +14,16 @@ namespace MoreMultiplayerInfo.EventHandlers
     {
         public class PlayerLastActivity
         {
+            private static Dictionary<string, string> ActivityDisplayNames => new Dictionary<string, string>
+            {
+                { "hoe", "Dug in dirt" },
+                { "pickaxe", "Smashed a rock" },
+                { "axe", "Chopped a tree" },
+                { "wateringcan", "Watered a crop" },
+                { "warped", "Switched areas" }
+            };
+
+
             public string Activity { get; set; }
 
             public int When { get; set; }
@@ -42,23 +52,12 @@ namespace MoreMultiplayerInfo.EventHandlers
                     return "Standing Around";
                 }
 
-                switch (Activity.ToLower()) 
+                if (ActivityDisplayNames.ContainsKey(Activity))
                 {
-                    case "hoe":
-                        return "Dug in dirt";
-                    case "pickaxe":
-                        return "Swung a pickaxe";
-                    case "axe":
-                        return "Swung an axe";
-                    case "wateringcan":
-                        return "Watered plants";
-                    case "fishingrod":
-                        return "Went fishing";
-                    case "warped":
-                        return "Switched areas";
-                    default:
-                        return "N/A";
+                    return ActivityDisplayNames[Activity];
                 }
+
+                return Activity;
             }
 
             private string GetWhenDisplay()
@@ -93,11 +92,8 @@ namespace MoreMultiplayerInfo.EventHandlers
             {
                 var playerId = player.uniqueMultiplayerID;
 
-                if (!LastActions.ContainsKey(playerId))
-                {
-                    LastActions.Add(playerId, new PlayerLastActivity());
-                }
-
+                LastActions.GetOrCreateDefault(playerId);
+                
                 var currentLocation = player.currentLocation.name;
 
                 if (currentLocation != LastActions[playerId].LocationName)
@@ -114,7 +110,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                 {
                     LastActions[playerId] = new PlayerLastActivity
                     {
-                        Activity = player.CurrentTool?.Name,
+                        Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
                         When = Game1.timeOfDay,
                         LocationName = currentLocation
                     };
@@ -126,12 +122,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         public static PlayerLastActivity GetLastActionForPlayer(long playerId)
         {
-            if (!LastActions.ContainsKey(playerId))
-            {
-                LastActions.Add(playerId, new PlayerLastActivity());
-            }
-
-            return LastActions[playerId];
+            return LastActions.GetOrCreateDefault(playerId);
         }
     }
 }

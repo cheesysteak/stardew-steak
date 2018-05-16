@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventHandlers\PlayerStateWatcher.cs" />
+    <Compile Include="Helpers\DictionaryExtensions.cs" />
     <Compile Include="Helpers\LocationHelper.cs" />
     <Compile Include="Helpers\MonitorExtensions.cs" />
     <Compile Include="Helpers\DrawingHelper.cs" />
