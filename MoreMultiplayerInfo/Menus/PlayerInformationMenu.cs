@@ -54,7 +54,7 @@ namespace MoreMultiplayerInfo
             this.xPositionOnScreen = Xposition;
             this.yPositionOnScreen = Yposition;
         }
-        
+
         public override void draw(SpriteBatch b)
         {
             Game1.mouseCursor = 0;
@@ -123,7 +123,7 @@ namespace MoreMultiplayerInfo
 
             var titleWidth = font.MeasureString(text).X;
 
-            var xPos = xPositionOnScreen + (Width / 2) - (titleWidth /2);
+            var xPos = xPositionOnScreen + (Width / 2) - (titleWidth / 2);
 
             b.DrawString(font, text, new Vector2(xPos, this.yPositionOnScreen + 25), Color.Black);
         }
@@ -139,14 +139,14 @@ namespace MoreMultiplayerInfo
         {
             if (!string.IsNullOrEmpty(HoverText))
             {
-                IClickableMenu.drawToolTip(b, HoverText, HoverText, HoveredItem);
+                IClickableMenu.drawToolTip(b, HoveredItem.getDescription(), HoverText, HoveredItem);
             }
         }
-        
+
 
         private void DrawInventory(SpriteBatch b)
         {
-            _inventory = new InventoryMenu(this.xPositionOnScreen + 25, this.yPositionOnScreen + 100, false, Player.Items)
+            _inventory = new InventoryMenu(this.xPositionOnScreen + 38, this.yPositionOnScreen + 100, false, Player.Items)
             {
                 showGrayedOutSlots = true
             };
@@ -194,12 +194,10 @@ namespace MoreMultiplayerInfo
                 if (c.containsPoint(x, y))
                 {
                     var item = _inventory.getItemFromClickableComponent(c);
-                    if (item != null)
-                    {
-                        HoverText = $"{item.Name} x {item.Stack}";
-
-                        HoveredItem = item;
-                    }
+                    if (item == null)
+                        continue;
+                    HoveredItem = item;
+                    HoverText = $"{item.Name}";
                 }
             }
         }
@@ -229,7 +227,7 @@ namespace MoreMultiplayerInfo
             Game1.onScreenMenus.Remove(this);
             GraphicsEvents.Resize -= Resize;
         }
-        
+
         private string GetFriendlyLocationName(string locationName)
         {
             Regex regex = new Regex(@"\d+$");

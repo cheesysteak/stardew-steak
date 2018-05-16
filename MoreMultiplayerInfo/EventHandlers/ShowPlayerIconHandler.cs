@@ -23,7 +23,6 @@ namespace MoreMultiplayerInfo
             _readyCheckHandler = new ReadyCheckHandler(monitor, helper);
 
             _iconMenu = new PlayerIconMenu(_readyCheckHandler, monitor, helper);
-
             _iconMenu.PlayerIconClicked += PlayerIconClicked;
             StardewModdingAPI.Events.SaveEvents.AfterLoad += SaveEvents_AfterLoad;
         }
