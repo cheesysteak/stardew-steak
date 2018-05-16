@@ -1,10 +1,6 @@
-﻿using System;
+﻿using StardewValley;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using StardewValley;
 
 namespace MoreMultiplayerInfo.Helpers
 {
@@ -60,10 +56,10 @@ namespace MoreMultiplayerInfo.Helpers
             Regex regex = new Regex(@"\d+$");
             if (regex.IsMatch(locationName))
             {
-                if (locationName.Contains("UndergroundMine"))
-                    return "Floor " + regex.Match(locationName) + " of " + "Mountain Mines";
-                else
-                    return "Floor " + regex.Match(locationName) + " of " + "Skull Cavern";
+                var floor = regex.Match(locationName);
+                var mine = locationName.Contains("UndergroundMine") ? "Mountain Mine" : "Skull Cavern";
+
+                return $"Floor {floor} of {mine}";
             }
 
             if (Locations.ContainsKey(locationName))

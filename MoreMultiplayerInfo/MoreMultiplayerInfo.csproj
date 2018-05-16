@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventHandlers\PlayerStateWatcher.cs" />
+    <Compile Include="Helpers\ConfigHelper.cs" />
     <Compile Include="Helpers\DictionaryExtensions.cs" />
     <Compile Include="Helpers\LocationHelper.cs" />
     <Compile Include="Helpers\MonitorExtensions.cs" />
@@ -85,7 +86,6 @@
     <Compile Include="Menus\PlayerSkillInfo.cs" />
     <Compile Include="EventHandlers\ReadyCheckHandler.cs" />
     <Compile Include="Helpers\PlayerHelpers.cs" />
-    <Compile Include="EventHandlers\LogInputHandler.cs" />
     <Compile Include="ModEntry.cs" />
     <Compile Include="ModEntryHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

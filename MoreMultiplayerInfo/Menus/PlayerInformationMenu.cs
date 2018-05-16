@@ -52,7 +52,7 @@ namespace MoreMultiplayerInfo
 
             GraphicsEvents.Resize += Resize;
 
-            _configOptions = helper.ReadConfig<ModConfigOptions>();
+            _configOptions = ConfigHelper.GetOptions();
         }
 
         private void Resize(object sender, EventArgs e)

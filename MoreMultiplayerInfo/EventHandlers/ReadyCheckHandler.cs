@@ -58,20 +58,17 @@ namespace MoreMultiplayerInfo
             {
                 if (player == Game1.player.UniqueMultiplayerID) continue; /* Don't care about current player */
 
-                if (!ReadyPlayers.ContainsKey(player))
-                {
-                    ReadyPlayers.Add(player, new HashSet<string>());
-                }
-
+                ReadyPlayers.GetOrCreateDefault(player);
+                
                 var checksBefore = readyPlayersBefore[player];
                 var checksNow = ReadyPlayers[player];
 
                 var newCheck = checksNow.FirstOrDefault(c => !checksBefore.Contains(c));
                 var removedCheck = checksBefore.FirstOrDefault(c => !checksNow.Contains(c));
 
-                var playerName = PlayerHelpers.GetPlayerWithUniqueId(player)?.Name;
+                var playerName = PlayerHelpers.GetPlayerWithUniqueId(player).Name;
 
-                var options = _helper.ReadConfig<ModConfigOptions>();
+                var options = ConfigHelper.GetOptions();
 
                 if (newCheck != null && newCheck != "wakeup")
                 {
@@ -96,11 +93,7 @@ namespace MoreMultiplayerInfo
 
         private void UpdateReadyChecksAndReadyPlayers()
         {
-            var readyChecksField = _helper.Reflection.GetField<object>(Game1.player.team, "readyChecks");
-            var readyChecksValue = readyChecksField.GetValue();
-            var readyChecksValueType = readyChecksValue.GetType();
-
-            var readyChecksValueTypeValues = ((IEnumerable<object>)readyChecksValueType.GetProperty("Values").GetValue(readyChecksValue)).ToList();
+            var readyChecks = GetReadyChecks();
 
             var readyChecksResult = new Dictionary<string, HashSet<long>>();
             var readyPlayersResult = new Dictionary<long, HashSet<string>>();
@@ -112,63 +105,62 @@ namespace MoreMultiplayerInfo
                 readyPlayersResult.Add(player, new HashSet<string>());
             }
 
-            foreach (var readyCheck in readyChecksValueTypeValues)
+            foreach (var readyCheck in readyChecks)
             {
-
-                var readyCheckName = _helper.Reflection.GetProperty<string>(readyCheck, "Name").GetValue();
-                var readyPlayersCollection = _helper.Reflection.GetField<NetFarmerCollection>(readyCheck, "readyPlayers").GetValue();
-
-                var readyPlayersIds = new HashSet<long>(readyPlayersCollection.Select(p => p.UniqueMultiplayerID).Distinct());
-
-                readyChecksResult.Add(readyCheckName, readyPlayersIds);
-
-                foreach (var playerId in readyPlayersIds)
-                {
-                    if (!readyPlayersResult.ContainsKey(playerId))
-                    {
-                        readyPlayersResult.Add(playerId, new HashSet<string>());
-                    }
-
-                    readyPlayersResult[playerId].Add(readyCheckName);
-                }
+                ProcessReadyCheck(readyCheck, readyChecksResult, readyPlayersResult);
             }
 
             ReadyChecks = readyChecksResult;
             ReadyPlayers = readyPlayersResult;
         }
 
-        public bool IsPlayerWaiting(long playerId)
+        private void ProcessReadyCheck(object readyCheck, Dictionary<string, HashSet<long>> readyChecks, Dictionary<long, HashSet<string>> readyPlayers)
         {
-            if (!ReadyPlayers.ContainsKey(playerId))
-            {
-                ReadyPlayers.Add(playerId, new HashSet<string>());
-            }
+            var readyCheckName = _helper.Reflection.GetProperty<string>(readyCheck, "Name").GetValue();
+            var readyPlayersCollection = _helper.Reflection.GetField<NetFarmerCollection>(readyCheck, "readyPlayers").GetValue();
 
-            return ReadyPlayers[playerId].Any(r => r != "wakeup");
+            var readyPlayersIds = new HashSet<long>(readyPlayersCollection.Select(p => p.UniqueMultiplayerID).Distinct());
+
+            readyChecks.Add(readyCheckName, readyPlayersIds);
+
+            foreach (var playerId in readyPlayersIds)
+            {
+                readyPlayers.GetOrCreateDefault(playerId).Add(readyCheckName);
+            }
         }
 
-        public string GetReadyCheckDisplayForPlayer(long playerId)
+        private List<object> GetReadyChecks()
         {
-            return string.Join(", ", ReadyPlayers[playerId].Select(GetFriendlyReadyCheckName));
+            var readyChecksField = _helper.Reflection.GetField<object>(Game1.player.team, "readyChecks");
+            var readyChecksValue = readyChecksField.GetValue();
+            var readyChecksValueType = readyChecksValue.GetType();
+
+            var readyChecksValueTypeValues = ((IEnumerable<object>) readyChecksValueType.GetProperty("Values").GetValue(readyChecksValue)).ToList();
+            return readyChecksValueTypeValues;
+        }
+
+        public bool IsPlayerWaiting(long playerId)
+        {
+            return ReadyPlayers.GetOrCreateDefault(playerId).Any(r => r != "wakeup");
         }
 
         private string GetFriendlyReadyCheckName(string readyCheckName)
         {
-            switch (readyCheckName)
+            var map = new Dictionary<string, string>
             {
-                case "festivalStart":
-                    return "for " + Game1.CurrentEvent.FestivalName;
-                case "festivalEnd":
-                    return "to leave";
-                case "sleep":
-                    return "to sleep";
-                case "wakeup":
-                    return "to wake up";
-                case "passOut":
-                    return "to pass out";
-                default:
-                    return readyCheckName;
+                { "festivalStart", $"for {Game1.CurrentEvent.FestivalName}" },
+                { "festivalEnd", "to leave" },
+                { "sleep", "to sleep" },
+                { "wakeup", "to wake up" },
+                { "passOut", "to pass out" }
+            };
+
+            if (map.ContainsKey(readyCheckName))
+            {
+                return map[readyCheckName];
             }
+
+            return readyCheckName;
         }
     }
 }

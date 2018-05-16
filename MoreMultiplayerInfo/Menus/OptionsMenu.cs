@@ -6,6 +6,7 @@ using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MoreMultiplayerInfo.Helpers;
 
 namespace MoreMultiplayerInfo
 {
@@ -20,7 +21,7 @@ namespace MoreMultiplayerInfo
     }
 
     public class OptionsMenu<TOptions> : IClickableMenu
-    where TOptions : class, new()
+    where TOptions : ModConfigOptions, new()
     {
         private readonly IModHelper _helper;
         private readonly long _originPlayerId;
@@ -36,7 +37,7 @@ namespace MoreMultiplayerInfo
         {
             _helper = helper;
             _originPlayerId = originPlayerId;
-            _config = helper.ReadConfig<TOptions>();
+            _config = (TOptions) ConfigHelper.GetOptions();
         }
 
         public override void draw(SpriteBatch b)
@@ -155,8 +156,8 @@ namespace MoreMultiplayerInfo
                 property.SetValue(_config, !(bool) property.GetValue(_config, null));
             }
 
-            
-            _helper.WriteConfig(_config);
+
+            ConfigHelper.SaveOptions(_config);
         }
     }
 }
