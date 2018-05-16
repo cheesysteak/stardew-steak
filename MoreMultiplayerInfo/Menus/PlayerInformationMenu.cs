@@ -7,6 +7,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Text.RegularExpressions;
+using MoreMultiplayerInfo.EventHandlers;
 
 namespace MoreMultiplayerInfo
 {
@@ -27,6 +28,10 @@ namespace MoreMultiplayerInfo
         private PlayerHealthInfo _healthBar;
         private ClickableTextureComponent _optionsIcon;
 
+        private Vector2 _locationPos;
+
+        private Vector2 _lastActionPos;
+
         private static int Width => 850;
         private static int Height => 580;
 
@@ -39,7 +44,8 @@ namespace MoreMultiplayerInfo
 
         private static int GenericHeightSpacing => 25;
 
-        public PlayerInformationMenu(long playerUniqueMultiplayerId, IModHelper helper) : base(Xposition, Yposition, Width, Height, true)
+        public PlayerInformationMenu(long playerUniqueMultiplayerId, IModHelper helper) : base(Xposition, Yposition,
+            Width, Height, true)
         {
             PlayerId = playerUniqueMultiplayerId;
             _helper = helper;
@@ -73,6 +79,8 @@ namespace MoreMultiplayerInfo
 
             /* DrawHealth(b); */
 
+            DrawLastActionInfo(b);
+
             DrawHoverText(b);
 
             DrawOptionsIcon(b);
@@ -84,19 +92,26 @@ namespace MoreMultiplayerInfo
         {
             var zoom = (int) (Game1.pixelZoom * 0.5f);
 
-            _optionsIcon = new ClickableTextureComponent("", new Rectangle(xPositionOnScreen + 15, yPositionOnScreen + 15, 17 * zoom, 17 * zoom), "", "", Game1.mouseCursors, new Rectangle(162, 440, 17, 17), zoom, false);
+            _optionsIcon = new ClickableTextureComponent("",
+                new Rectangle(xPositionOnScreen + 15, yPositionOnScreen + 15, 17 * zoom, 17 * zoom), "", "",
+                Game1.mouseCursors, new Rectangle(162, 440, 17, 17), zoom, false);
             _optionsIcon.draw(b);
         }
 
+
+
         private void DrawHealth(SpriteBatch b)
         {
-            _healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina, new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
+            _healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina,
+                new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
             _healthBar.draw(b);
         }
 
         private void DrawSkills(SpriteBatch b)
         {
-            _skillInfo = new PlayerSkillInfo(Player, new Vector2(_inventory.xPositionOnScreen, _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing));
+            _skillInfo = new PlayerSkillInfo(Player,
+                new Vector2(_inventory.xPositionOnScreen,
+                    _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing));
             _skillInfo.draw(b);
         }
 
@@ -104,7 +119,7 @@ namespace MoreMultiplayerInfo
         {
             var yPos = _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing;
 
-            var text = $"Location: {GetFriendlyLocationName(Player.currentLocation.Name)} ";
+            var text = $"Location: {LocationHelper.GetFriendlyLocationName(Player.currentLocation.Name)} ";
 
             var font = Game1.smallFont;
 
@@ -112,7 +127,27 @@ namespace MoreMultiplayerInfo
 
             var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4) - (textWidth / 2);
 
-            b.DrawString(font, text, new Vector2(xPos, yPos), Color.Black);
+            _locationPos = new Vector2(xPos, yPos);
+
+            b.DrawString(font, text, _locationPos, Color.Black);
+        }
+
+        private void DrawLastActionInfo(SpriteBatch b)
+        {
+            var yPos = _locationPos.Y + Game1.smallFont.LineSpacing + GenericHeightSpacing;
+            var action = PlayerStateWatcher.GetLastActionForPlayer(PlayerId);
+
+            var text = action.GetDisplayText();
+
+            var textWidth = Game1.smallFont.MeasureString(text).X;
+
+            var font = Game1.smallFont;
+
+            var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4) - (textWidth / 2);
+
+            _lastActionPos = new Vector2(xPos, yPos);
+
+            b.DrawString(font, text, _lastActionPos, Color.Black);
         }
 
         private void DrawTitle(SpriteBatch b)
@@ -130,7 +165,8 @@ namespace MoreMultiplayerInfo
 
         private void DrawBackground(SpriteBatch b)
         {
-            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18), this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White, Game1.pixelZoom);
+            IClickableMenu.drawTextureBox(b, Game1.mouseCursors, new Rectangle(384, 373, 18, 18),
+                this.xPositionOnScreen, this.yPositionOnScreen, this.width, this.height, Color.White, Game1.pixelZoom);
 
             this.upperRightCloseButton.draw(b);
         }
@@ -146,7 +182,8 @@ namespace MoreMultiplayerInfo
 
         private void DrawInventory(SpriteBatch b)
         {
-            _inventory = new InventoryMenu(this.xPositionOnScreen + 38, this.yPositionOnScreen + 100, false, Player.Items)
+            _inventory = new InventoryMenu(this.xPositionOnScreen + 38, this.yPositionOnScreen + 100, false,
+                Player.Items)
             {
                 showGrayedOutSlots = true
             };
@@ -159,7 +196,7 @@ namespace MoreMultiplayerInfo
             {
                 _inventory.height = 0;
             }
-            
+
         }
 
         public override void performHoverAction(int x, int y)
@@ -215,7 +252,7 @@ namespace MoreMultiplayerInfo
 
                 Game1.activeClickableMenu = optionsMenu;
             }
-            
+
 
             base.receiveLeftClick(x, y, playSound);
         }
@@ -228,100 +265,6 @@ namespace MoreMultiplayerInfo
             GraphicsEvents.Resize -= Resize;
         }
 
-        private string GetFriendlyLocationName(string locationName)
-        {
-            Regex regex = new Regex(@"\d+$");
-            if (regex.IsMatch(locationName)) {
-                if (locationName.Contains("UndergroundMine"))
-                return "Floor " + regex.Match(locationName) + " of " + "Mountain Mines";
-                else
-                return "Floor " + regex.Match(locationName) + " of " + "Skull Cavern";
-            }
-            switch (locationName)
-            {
-                case "BusStop":
-                    return "Bus Stop";
-                case "ArchaeologyHouse":
-                    return "Archaeology Office";
-                case "SeedShop":
-                    return "General Store";
-                case "JoshHouse":
-                    return "1 River Road";
-                case "ManorHouse":
-                    return "Mayor's Manor";
-                case "HaleyHouse":
-                    return "2 Willow Lane";
-                case "SamHouse":
-                    return "1 Willow Lane";
-                case "Town":
-                    return "Pelican Town";
-                case "FarmHouse":
-                    return "Farm House";
-                case "Farm":
-                    return Game1.player.farmName.Value + " Farm";
-                case "Cabin":
-                    return "Farm Cabin";
-                case "Tent":
-                    return "Mountain Tent";
-                case "CommunityCenter":
-                    return "Community Center";
-                case "WizardHouseBasement":
-                    return "Wizard Tower Basement";
-                case "WitchHut":
-                    return "Witch Hut";
-                case "WitchSwamp":
-                    return "Witch Swamp";
-                case "WitchWarpCave":
-                    return "Witch Warp Cave";
-                case "Greenhouse":
-                    return "Farm Greenhouse";
-                case "FarmCave":
-                    return "Farm Cave";
-                case "Coop":
-                    return "Farm Coop";
-                case "Barn":
-                    return "Farm Barn";
-                case "SkullCave":
-                    return "Skull Cavern Entrance";
-                case "UndergroundMine":
-                    return "Mountain Mines Entrance";
-                case "SandyHouse":
-                    return "Oasis";
-                case "BathHouse_Pool":
-                    return "Bath House Pool";
-                case "BathHouse_WomensLocker":
-                    return "Bath House";
-                case "BathHouse_MensLocker":
-                    return "Bath House";
-                case "BathHouse_Entry":
-                    return "Bath House Entrance";
-                case "WizardHouse":
-                    return "Wizard's Tower";
-                case "AdventureGuild":
-                    return "Adventurer's Guild";
-                case "ScienceHouse":
-                    return "Carpenter's Shop";
-                case "SebastianRoom":
-                    return "Sebastian's Room";
-                case "LeahHouse":
-                    return "Leah's Cottage";
-                case "FishShop":
-                    return "Fishing Shop";
-                case "Hospital":
-                    return "Harvey's Clinic";
-                case "Saloon":
-                    return "Stardrop Saloon";
-                case "JojaMart":
-                    return "Joja Mart";
-                case "AnimalShop":
-                    return "Marnie's Ranch";
-                case "Woods":
-                    return "Secret Woods";
-                case "Forest":
-                    return "Cindersap Forest";
-                default:
-                    return locationName;
-            }
-        }
+
     }
 }

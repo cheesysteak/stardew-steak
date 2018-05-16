@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
+using StardewModdingAPI.Utilities;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
@@ -112,6 +113,8 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         public override void draw(SpriteBatch b)
         {
+            if (Game1.eventUp || !Context.IsWorldReady) return; /* Don't draw during festivals or events */
+
             DrawPlayerIcons();
 
             base.draw(b);
@@ -119,8 +122,6 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         private void DrawPlayerIcons()
         {
-            if (Game1.eventUp || !Context.IsWorldReady) return; /* Don't draw during festivals or events */
-
             foreach (var icon in Icons)
             {
                 var player = PlayerHelpers.GetPlayerWithUniqueId(icon.PlayerId);

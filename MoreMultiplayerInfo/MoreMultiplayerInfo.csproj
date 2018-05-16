@@ -68,13 +68,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Menus\DrawingHelper.cs" />
-    <Compile Include="Menus\ModConfigOptions.cs" />
+    <Compile Include="EventHandlers\PlayerStateWatcher.cs" />
+    <Compile Include="Helpers\LocationHelper.cs" />
+    <Compile Include="Helpers\MonitorExtensions.cs" />
+    <Compile Include="Helpers\DrawingHelper.cs" />
+    <Compile Include="Models\ModConfigOptions.cs" />
     <Compile Include="Menus\OptionsMenu.cs" />
     <Compile Include="Menus\PlayerEquipmentInfo.cs" />
     <Compile Include="Menus\PlayerHealthInfo.cs" />
     <Compile Include="Menus\ProgressBar.cs" />
-    <Compile Include="Menus\TextureHelper.cs" />
+    <Compile Include="Helpers\TextureHelper.cs" />
     <Compile Include="Models\PlayerIcon.cs" />
     <Compile Include="Menus\PlayerIconMenu.cs" />
     <Compile Include="Menus\PlayerInformationMenu.cs" />
