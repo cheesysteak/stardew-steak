@@ -13,9 +13,9 @@ namespace MoreMultiplayerInfo
     {
         public long PlayerId;
 
-        private readonly IMonitor _monitor;
-
         private readonly IModHelper _helper;
+
+        private readonly ModConfigOptions _configOptions;
 
         private Farmer Player => PlayerHelpers.GetPlayerWithUniqueId(PlayerId);
 
@@ -23,6 +23,8 @@ namespace MoreMultiplayerInfo
 
         private PlayerSkillInfo _skillInfo;
         private PlayerEquipmentInfo _equipmentInfo;
+        private PlayerHealthInfo _healthBar;
+        private ClickableTextureComponent _optionsIcon;
 
         private static int Width => 850;
         private static int Height => 580;
@@ -36,14 +38,14 @@ namespace MoreMultiplayerInfo
 
         private static int GenericHeightSpacing => 25;
 
-        public PlayerInformationMenu(long playerUniqueMultiplayerId, IMonitor monitor, IModHelper helper) : base(Xposition, Yposition, Width, Height, true)
+        public PlayerInformationMenu(long playerUniqueMultiplayerId, IModHelper helper) : base(Xposition, Yposition, Width, Height, true)
         {
             PlayerId = playerUniqueMultiplayerId;
-            _monitor = monitor;
             _helper = helper;
 
             GraphicsEvents.Resize += Resize;
 
+            _configOptions = helper.ReadConfig<ModConfigOptions>();
         }
 
         private void Resize(object sender, EventArgs e)
@@ -72,13 +74,23 @@ namespace MoreMultiplayerInfo
 
             DrawHoverText(b);
 
+            DrawOptionsIcon(b);
+
             drawMouse(b);
+        }
+
+        private void DrawOptionsIcon(SpriteBatch b)
+        {
+            var zoom = (int) (Game1.pixelZoom * 0.5f);
+
+            _optionsIcon = new ClickableTextureComponent("", new Rectangle(xPositionOnScreen + 15, yPositionOnScreen + 15, 17 * zoom, 17 * zoom), "", "", Game1.mouseCursors, new Rectangle(162, 440, 17, 17), zoom, false);
+            _optionsIcon.draw(b);
         }
 
         private void DrawHealth(SpriteBatch b)
         {
-            var healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina, new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
-            healthBar.draw(b);
+            _healthBar = new PlayerHealthInfo(Player.health, Player.maxHealth, (int) Player.Stamina, Player.maxStamina, new Rectangle(_skillInfo.xPositionOnScreen + _skillInfo.Width, _skillInfo.yPositionOnScreen, 45, 11));
+            _healthBar.draw(b);
         }
 
         private void DrawSkills(SpriteBatch b)
@@ -100,7 +112,6 @@ namespace MoreMultiplayerInfo
             var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4) - (textWidth / 2);
 
             b.DrawString(font, text, new Vector2(xPos, yPos), Color.Black);
-
         }
 
         private void DrawTitle(SpriteBatch b)
@@ -139,7 +150,15 @@ namespace MoreMultiplayerInfo
                 showGrayedOutSlots = true
             };
 
-            _inventory.draw(b);
+            if (_configOptions.ShowInventory)
+            {
+                _inventory.draw(b);
+            }
+            else
+            {
+                _inventory.height = 0;
+            }
+            
         }
 
         public override void performHoverAction(int x, int y)
@@ -152,6 +171,16 @@ namespace MoreMultiplayerInfo
             if (_inventory.isWithinBounds(x, y))
             {
                 SetHoverTextFromInventory(x, y);
+            }
+
+            if (_optionsIcon.containsPoint(x, y))
+            {
+                HoverText = "Configure Mod Settings";
+            }
+
+            if (_optionsIcon.containsPoint(x, y))
+            {
+                Game1.mouseCursor = 9;
             }
 
             base.performHoverAction(x, y);
@@ -180,6 +209,14 @@ namespace MoreMultiplayerInfo
             {
                 UnloadMenu(playSound);
             }
+
+            if (this._optionsIcon.containsPoint(x, y))
+            {
+                var optionsMenu = new OptionsMenu<ModConfigOptions>(_helper, 500, 350, PlayerId);
+
+                Game1.activeClickableMenu = optionsMenu;
+            }
+            
 
             base.receiveLeftClick(x, y, playSound);
         }

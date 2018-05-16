@@ -69,6 +69,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Menus\DrawingHelper.cs" />
+    <Compile Include="Menus\ModConfigOptions.cs" />
+    <Compile Include="Menus\OptionsMenu.cs" />
     <Compile Include="Menus\PlayerEquipmentInfo.cs" />
     <Compile Include="Menus\PlayerHealthInfo.cs" />
     <Compile Include="Menus\ProgressBar.cs" />
