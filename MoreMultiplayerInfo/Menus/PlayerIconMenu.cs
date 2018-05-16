@@ -8,6 +8,7 @@ using StardewValley;
 using StardewValley.Menus;
 using System;
 using System.Collections.Generic;
+using StardewModdingAPI.Utilities;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
@@ -112,6 +113,8 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         public override void draw(SpriteBatch b)
         {
+            if (Game1.eventUp || !Context.IsWorldReady) return; /* Don't draw during festivals or events */
+
             DrawPlayerIcons();
 
             base.draw(b);
@@ -119,8 +122,6 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         private void DrawPlayerIcons()
         {
-            if (Game1.eventUp) return; /* Don't draw during festivals or events */
-
             foreach (var icon in Icons)
             {
                 var player = PlayerHelpers.GetPlayerWithUniqueId(icon.PlayerId);
@@ -137,7 +138,6 @@ namespace MoreMultiplayerInfo.EventHandlers
                 if (PlayerHelpers.IsPlayerOffline(icon.PlayerId))
                 {
                     DrawOfflineIcon(icon);
-                    
                 }
 
 
@@ -160,7 +160,7 @@ namespace MoreMultiplayerInfo.EventHandlers
             Game1.mouseCursor = 5;
         }
 
-        private static void DrawHoverTextForPlayer(Farmer player)
+        private void DrawHoverTextForPlayer(Farmer player)
         {
             var text = player.Name;
 
@@ -168,19 +168,14 @@ namespace MoreMultiplayerInfo.EventHandlers
             {
                 text += " (Offline)";
             }
-
+            else if (_readyCheckHandler.IsPlayerWaiting(player.UniqueMultiplayerID))
+                text += " (Awaiting Players)";
             IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
         }
 
         private void DrawWaitingIcon(PlayerIcon icon)
         {
             icon.WaitingIcon.draw(Game1.spriteBatch);
-
-            if (icon.WaitingIcon.containsPoint(Game1.getMouseX(), Game1.getMouseY()))
-            {
-                var text = $" (Awaiting Players)"; //{_readyCheckHandler.GetReadyCheckDisplayForPlayer(icon.PlayerId)}
-                IClickableMenu.drawHoverText(Game1.spriteBatch, text, Game1.dialogueFont);
-            }
         }
 
         public override void receiveLeftClick(int x, int y, bool playSound = true)

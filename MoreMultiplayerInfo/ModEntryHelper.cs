@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using MoreMultiplayerInfo.EventHandlers;
+using StardewModdingAPI;
 
 namespace MoreMultiplayerInfo
 {
@@ -7,6 +8,8 @@ namespace MoreMultiplayerInfo
         public ModEntryHelper(IMonitor monitor, IModHelper modHelper)
         {
             var showIcon = new ShowPlayerIconHandler(monitor, modHelper);
+
+            var playerWatcher = new PlayerStateWatcher();
 
             // var logHandler = new LogInputHandler(monitor, modHelper);
         }

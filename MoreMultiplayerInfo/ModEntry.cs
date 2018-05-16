@@ -1,4 +1,5 @@
-﻿using StardewModdingAPI;
+﻿using MoreMultiplayerInfo.Helpers;
+using StardewModdingAPI;
 
 namespace MoreMultiplayerInfo
 {
@@ -8,6 +9,8 @@ namespace MoreMultiplayerInfo
 
         public override void Entry(IModHelper helper)
         {
+            ConfigHelper.Helper = helper;
+
             _baseHandler = new ModEntryHelper(Monitor, helper);
         }
     }
