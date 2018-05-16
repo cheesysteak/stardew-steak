@@ -109,11 +109,11 @@ namespace MoreMultiplayerInfo
 
             var uncheckedSrc = new Rectangle(267, 256, 10, 10);
 
-            var checkedSrc = new Rectangle(338, 494, 10, 10);
+            var checkedSrc = new Rectangle(338, 494, 12, 12);
 
             var src = value ? checkedSrc : uncheckedSrc;
 
-            var checkbox = new ClickableTextureComponent(propertyName, new Rectangle(xPos, yPos, checkboxSize, checkboxSize), "", "", Game1.mouseCursors, src, Game1.pixelZoom, false);
+            var checkbox = new ClickableTextureComponent(propertyName, new Rectangle(xPos, yPos, checkboxSize, checkboxSize), "", "", Game1.mouseCursors, src, Game1.pixelZoom * 0.75f, false);
 
             Checkboxes.Add(checkbox);
 
@@ -137,6 +137,8 @@ namespace MoreMultiplayerInfo
                 Game1.onScreenMenus.Remove(this);
 
                 var menu = new PlayerInformationMenu(_originPlayerId, _helper);
+
+                Game1.activeClickableMenu = menu;
             }
 
             base.receiveLeftClick(x, y, playSound);

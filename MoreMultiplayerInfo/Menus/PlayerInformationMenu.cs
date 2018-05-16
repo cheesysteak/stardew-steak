@@ -47,6 +47,11 @@ namespace MoreMultiplayerInfo
             GraphicsEvents.Resize += Resize;
 
             _configOptions = helper.ReadConfig<ModConfigOptions>();
+
+            if (!_configOptions.ShowInventory)
+            {
+                this.height -= 200;
+            }
         }
 
         private void Resize(object sender, EventArgs e)
@@ -82,9 +87,9 @@ namespace MoreMultiplayerInfo
 
         private void DrawOptionsIcon(SpriteBatch b)
         {
-            var zoom = (int) (Game1.pixelZoom * 0.5f);
+            var zoom = (int) (Game1.pixelZoom * 0.75f);
 
-            _optionsIcon = new ClickableTextureComponent("", new Rectangle(xPositionOnScreen + 15, yPositionOnScreen + 15, 17 * zoom, 17 * zoom), "", "", Game1.mouseCursors, new Rectangle(162, 440, 17, 17), zoom, false);
+            _optionsIcon = new ClickableTextureComponent("", new Rectangle(xPositionOnScreen + 25, yPositionOnScreen + 25, 17 * zoom, 17 * zoom), "", "", Game1.mouseCursors, new Rectangle(162, 440, 17, 17), zoom, false);
             _optionsIcon.draw(b);
         }
 

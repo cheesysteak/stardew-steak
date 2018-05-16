@@ -30,8 +30,10 @@ namespace MoreMultiplayerInfo
 
         private void SaveEvents_AfterLoad(object sender, System.EventArgs e)
         {
-            if (Context.IsMultiplayer)
-            Game1.onScreenMenus.Add(_iconMenu);
+            if (Context.IsMultiplayer || !_helper.ReadConfig<ModConfigOptions>().HideInSinglePlayer)
+            {
+                Game1.onScreenMenus.Add(_iconMenu);
+            }
         }
 
         private void PlayerIconClicked(object sender, PlayerIconClickedArgs input)
