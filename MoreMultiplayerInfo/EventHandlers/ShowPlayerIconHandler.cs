@@ -37,7 +37,7 @@ namespace MoreMultiplayerInfo
         {
             var player = PlayerHelpers.GetPlayerWithUniqueId(input.PlayerId);
 
-            Game1.activeClickableMenu = new PlayerInformationMenu(player.UniqueMultiplayerID, _monitor, _helper);
+            Game1.activeClickableMenu = new PlayerInformationMenu(player.UniqueMultiplayerID, _helper);
 
 
         }

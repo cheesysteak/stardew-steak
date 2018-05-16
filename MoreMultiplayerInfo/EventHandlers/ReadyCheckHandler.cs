@@ -71,14 +71,23 @@ namespace MoreMultiplayerInfo
 
                 var playerName = PlayerHelpers.GetPlayerWithUniqueId(player)?.Name;
 
+                var options = _helper.ReadConfig<ModConfigOptions>();
+
                 if (newCheck != null && newCheck != "wakeup")
                 {
-                    _helper.SelfInfoMessage($"{playerName} is now ready {GetFriendlyReadyCheckName(newCheck)}.");
 
-                    WarnIfIAmLastPlayerReady(newCheck);
+                    if (options.ShowReadyInfoInChatBox)
+                    {
+                        _helper.SelfInfoMessage($"{playerName} is now ready {GetFriendlyReadyCheckName(newCheck)}.");
+                    }
+
+                    if (options.ShowLastPlayerReadyInfoInChatBox)
+                    {
+                        WarnIfIAmLastPlayerReady(newCheck);
+                    }
                 }
 
-                if (removedCheck != null && removedCheck != "wakeup")
+                if (removedCheck != null && removedCheck != "wakeup" && options.ShowReadyInfoInChatBox)
                 {
                     _helper.SelfInfoMessage($"{playerName} is no longer ready {GetFriendlyReadyCheckName(removedCheck)}.");
                 }
