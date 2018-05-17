@@ -21,7 +21,7 @@ namespace MoreMultiplayerInfo
     }
 
     public class OptionsMenu<TOptions> : IClickableMenu
-    where TOptions : ModConfigOptions, new()
+    where TOptions : class, new()
     {
         private readonly IModHelper _helper;
         private readonly long _originPlayerId;
@@ -37,7 +37,7 @@ namespace MoreMultiplayerInfo
         {
             _helper = helper;
             _originPlayerId = originPlayerId;
-            _config = (TOptions) ConfigHelper.GetOptions();
+            _config = (TOptions) (object) ConfigHelper.GetOptions();
         }
 
         public override void draw(SpriteBatch b)

@@ -27,11 +27,11 @@ namespace MoreMultiplayerInfo.Helpers
             return _configOptions;
         }
 
-        public static void SaveOptions(ModConfigOptions config)
+        public static void SaveOptions(object config)
         {
             Helper.WriteConfig(config);
 
-            _configOptions = config;
+            _configOptions = null;
         }
 
         static ConfigHelper()
