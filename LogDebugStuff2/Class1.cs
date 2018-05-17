@@ -18,7 +18,10 @@ namespace LogDebugStuffEtc
         {
             if (e.Button == SButton.NumPad0)
             {
-                Monitor.Log($"{Game1.timeOfDay / 100}:{Game1.timeOfDay % 100}");
+                foreach (var player in Game1.getOnlineFarmers())
+                {
+                    Monitor.Log($"{player.Name} positionBeforeEvent: ({player.positionBeforeEvent.X}, {player.positionBeforeEvent.Y})");
+                }
             }
         }
     }

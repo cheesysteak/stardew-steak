@@ -5,6 +5,7 @@ using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
@@ -30,6 +31,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                 { "pole", "Went fishing" },
                 { "rod", "Went fishing" },
                 { "slingshot", "Fired a slingshot" },
+                { "event", "Watching a cutscene" },
             };
 
 
@@ -37,7 +39,9 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             public int When { get; set; }
 
-            private int WhenInMinutes => GameTimeHelper.GameTimeToMinutes(When);
+            public Vector2 PositionBeforeEvent { get; set; }
+
+            private int WhenInMinutes => GameTimeHelper.GameTimeToMinutes(When);            
 
             public string LocationName { get; set; }
 
@@ -121,11 +125,10 @@ namespace MoreMultiplayerInfo.EventHandlers
                         Activity = "warped",
                         LocationName = currentLocation,
                         When = Game1.timeOfDay,
+                        PositionBeforeEvent = player.positionBeforeEvent
                     };
                     continue;
                 }
-
-                
 
                 if (player.UsingTool)
                 {
@@ -134,25 +137,23 @@ namespace MoreMultiplayerInfo.EventHandlers
                         Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
                         When = Game1.timeOfDay,
                         LocationName = currentLocation,
+                        PositionBeforeEvent = player.positionBeforeEvent
                     };
                     continue;
                 }
 
-                /* 
-                if (player.CurrentToolIndex != LastActions[playerId].ToolIndex)
+                if (player.positionBeforeEvent != new Vector2() && player.positionBeforeEvent != LastActions[playerId].PositionBeforeEvent)
                 {
+                    
                     LastActions[playerId] = new PlayerLastActivity
                     {
-                        Activity = "swapped items",
+                        Activity = "event",
                         When = Game1.timeOfDay,
                         LocationName = currentLocation,
-                        ToolIndex = player.CurrentToolIndex
+                        PositionBeforeEvent = player.positionBeforeEvent
                     };
                     continue;
                 }
-                */
-
-
             }
         }
 

@@ -16,5 +16,8 @@
 
         [OptionDisplay("Hide in Single Player")]
         public bool HideInSinglePlayer { get; set; } = false;
+
+        [OptionDisplay("Show Cutscene Alerts")]
+        public bool ShowCutsceneInfoInChatBox { get; set; }
     }
 }
