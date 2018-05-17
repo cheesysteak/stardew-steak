@@ -30,6 +30,7 @@ namespace MoreMultiplayerInfo
         private Vector2 _locationPos;
 
         private Vector2 _lastActionPos;
+        private Vector2 _lastActionTimePos;
 
         private static int Width => 850;
         private static int Height => 580;
@@ -120,9 +121,16 @@ namespace MoreMultiplayerInfo
 
         private void DrawLocationInfo(SpriteBatch b)
         {
+            
+
             var yPos = _inventory.yPositionOnScreen + _inventory.height + GenericHeightSpacing;
 
             var text = $"Location: {LocationHelper.GetFriendlyLocationName(Player.currentLocation.Name)} ";
+
+            if (PlayerHelpers.IsPlayerOffline(PlayerId))
+            {
+                text = "(Offline)";
+            }
 
             var font = Game1.smallFont;
 
@@ -137,20 +145,33 @@ namespace MoreMultiplayerInfo
 
         private void DrawLastActionInfo(SpriteBatch b)
         {
-            var yPos = _locationPos.Y + Game1.smallFont.LineSpacing + GenericHeightSpacing;
+            if (PlayerHelpers.IsPlayerOffline(PlayerId)) return;
+
+            var font = Game1.smallFont;
+
+            var yPos = _locationPos.Y + font.LineSpacing + GenericHeightSpacing;
             var action = PlayerStateWatcher.GetLastActionForPlayer(PlayerId);
 
             var text = action.GetDisplayText();
 
-            var textWidth = Game1.smallFont.MeasureString(text).X;
+            var textWidth = font.MeasureString(text).X;
 
-            var font = Game1.smallFont;
+            var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4);
 
-            var xPos = _inventory.xPositionOnScreen + (_inventory.width * 3 / 4) - (textWidth / 2);
-
-            _lastActionPos = new Vector2(xPos, yPos);
+            _lastActionPos = new Vector2(xPos - (textWidth / 2), yPos);
 
             b.DrawString(font, text, _lastActionPos, Color.Black);
+
+            var lastActionTimeText = action.GetWhenDisplay();
+
+            var timeTextWidth = font.MeasureString(lastActionTimeText).X;
+
+            yPos += font.LineSpacing;
+
+            _lastActionTimePos = new Vector2(xPos - (timeTextWidth / 2), yPos);
+
+            b.DrawString(font, lastActionTimeText, _lastActionTimePos, Color.Black);
+
         }
 
         private void DrawTitle(SpriteBatch b)
@@ -178,7 +199,7 @@ namespace MoreMultiplayerInfo
         {
             if (!string.IsNullOrEmpty(HoverText))
             {
-                IClickableMenu.drawToolTip(b, HoveredItem.getDescription(), HoverText, HoveredItem);
+                IClickableMenu.drawToolTip(b, HoveredItem?.getDescription() ?? HoverText, HoverText, HoveredItem);
             }
         }
 

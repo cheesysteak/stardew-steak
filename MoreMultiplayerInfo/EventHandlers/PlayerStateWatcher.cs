@@ -1,12 +1,10 @@
-﻿using System;
+﻿using MoreMultiplayerInfo.Helpers;
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
+using StardewValley;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MoreMultiplayerInfo.Helpers;
-using StardewModdingAPI.Events;
-using StardewModdingAPI.Utilities;
-using StardewValley;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
@@ -16,11 +14,22 @@ namespace MoreMultiplayerInfo.EventHandlers
         {
             private static Dictionary<string, string> ActivityDisplayNames => new Dictionary<string, string>
             {
-                { "hoe", "Dug in dirt" },
-                { "pickaxe", "Smashed a rock" },
-                { "axe", "Chopped a tree" },
-                { "wateringcan", "Watered a crop" },
-                { "warped", "Switched areas" }
+                { "hoe", "Dug with a hoe" },
+                { "pickaxe", "Swung a pickaxe" },
+                { "axe", "Swung an axe" },
+                { "watering can", "Sprinkled some water" },
+                { "warped", "Switched areas" },
+                { "scythe", "Slashed a scythe" },
+                { "dirk", "Slashed a dagger" },
+                { "sword", "Slashed a sword" },
+                { "falchion", "Slashed a sword" },
+                { "edge", "Slashed a sword" },
+                { "blade", "Slashed a sword" },
+                { "mallet", "Slammed a mallet" },
+                { "swapped items", "Inventory management" },
+                { "pole", "Went fishing" },
+                { "rod", "Went fishing" },
+                { "slingshot", "Fired a slingshot" },
             };
 
 
@@ -28,46 +37,52 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             public int When { get; set; }
 
+            private int WhenInMinutes => GameTimeHelper.GameTimeToMinutes(When);
+
             public string LocationName { get; set; }
 
-            private int OneHourSpan => 6;
+            private int OneHourSpan => 60;
 
             private int HalfHour => OneHourSpan / 2;
 
             private int TwoHours => OneHourSpan * 2;
 
-            private int TimeSinceWhen => Game1.timeOfDay - When;
+            private int MinutesSinceWhen => GameTimeHelper.GameTimeToMinutes(Game1.timeOfDay) - WhenInMinutes;
 
             public string GetDisplayText()
             {
-
-                return $"Last Activity: {GetActivityDisplay()} {GetWhenDisplay()}";
+                return $"Last Activity: {GetActivityDisplay()}";
             }
 
 
             private string GetActivityDisplay()
             {
-                if (TimeSinceWhen >= TwoHours)
+                if (MinutesSinceWhen >= TwoHours)
                 {
-                    return "Standing Around";
+                    return "Nothing noteworthy";
                 }
 
-                if (ActivityDisplayNames.ContainsKey(Activity))
+                if (ActivityDisplayNames.Keys.Any(k => Activity.Contains(k)))
                 {
-                    return ActivityDisplayNames[Activity];
+                    return ActivityDisplayNames.First(k => Activity.Contains(k.Key)).Value;
                 }
 
                 return Activity;
             }
 
-            private string GetWhenDisplay()
+            public string GetWhenDisplay()
             {
-                if (TimeSinceWhen < HalfHour)
+                if (MinutesSinceWhen <= HalfHour)
                 {
                     return "just now";
                 }
 
-                if (TimeSinceWhen < TwoHours)
+                if (MinutesSinceWhen < OneHourSpan)
+                {
+                    return $"{MinutesSinceWhen} minutes ago";
+                }
+
+                if (MinutesSinceWhen < TwoHours)
                 {
                     return "one hour ago";
                 }
@@ -81,11 +96,14 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         public PlayerStateWatcher()
         {
+            LastActions = new Dictionary<long, PlayerLastActivity>();
             GameEvents.EighthUpdateTick += WatchPlayerActions;
         }
 
         private void WatchPlayerActions(object sender, EventArgs e)
         {
+            if (!Context.IsWorldReady) return;
+
             var players = PlayerHelpers.GetAllCreatedFarmers();
 
             foreach (var player in players)
@@ -102,9 +120,12 @@ namespace MoreMultiplayerInfo.EventHandlers
                     {
                         Activity = "warped",
                         LocationName = currentLocation,
-                        When = Game1.timeOfDay
+                        When = Game1.timeOfDay,
                     };
+                    continue;
                 }
+
+                
 
                 if (player.UsingTool)
                 {
@@ -112,11 +133,26 @@ namespace MoreMultiplayerInfo.EventHandlers
                     {
                         Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
                         When = Game1.timeOfDay,
-                        LocationName = currentLocation
+                        LocationName = currentLocation,
                     };
+                    continue;
                 }
 
-                
+                /* 
+                if (player.CurrentToolIndex != LastActions[playerId].ToolIndex)
+                {
+                    LastActions[playerId] = new PlayerLastActivity
+                    {
+                        Activity = "swapped items",
+                        When = Game1.timeOfDay,
+                        LocationName = currentLocation,
+                        ToolIndex = player.CurrentToolIndex
+                    };
+                    continue;
+                }
+                */
+
+
             }
         }
 
