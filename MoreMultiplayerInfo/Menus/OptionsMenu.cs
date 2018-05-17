@@ -33,11 +33,11 @@ namespace MoreMultiplayerInfo
 
         private static List<ClickableTextureComponent> Checkboxes { get; set; }
         
-        public OptionsMenu(IModHelper helper, int w, int h, long originPlayerId) : base((Game1.viewport.Width / 2) - (w / 2), (Game1.viewport.Height / 2) - (h / 2), w, h, true)
+        public OptionsMenu(IModHelper helper, int w, int h, long originPlayerId, TOptions options) : base((Game1.viewport.Width / 2) - (w / 2), (Game1.viewport.Height / 2) - (h / 2), w, h, true)
         {
             _helper = helper;
             _originPlayerId = originPlayerId;
-            _config = (TOptions) (object) ConfigHelper.GetOptions();
+            _config = options;
         }
 
         public override void draw(SpriteBatch b)
