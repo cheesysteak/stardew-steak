@@ -272,7 +272,7 @@ namespace MoreMultiplayerInfo
 
             if (this._optionsIcon.containsPoint(x, y))
             {
-                var optionsMenu = new OptionsMenu<ModConfigOptions>(_helper, 500, 350, PlayerId, ConfigHelper.GetOptions());
+                var optionsMenu = new OptionsMenu<ModConfigOptions>(_helper, 500, 425, PlayerId, ConfigHelper.GetOptions());
 
                 Game1.activeClickableMenu = optionsMenu;
             }

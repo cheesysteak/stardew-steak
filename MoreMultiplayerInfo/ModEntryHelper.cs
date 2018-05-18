@@ -9,7 +9,7 @@ namespace MoreMultiplayerInfo
         {
             var showIcon = new ShowPlayerIconHandler(monitor, modHelper);
 
-            var playerWatcher = new PlayerStateWatcher();
+            var playerWatcher = new PlayerStateWatcher(modHelper);
 
             // var logHandler = new LogInputHandler(monitor, modHelper);
         }

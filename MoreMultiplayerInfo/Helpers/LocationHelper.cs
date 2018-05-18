@@ -21,7 +21,7 @@ namespace MoreMultiplayerInfo.Helpers
             { "Cabin", "Farm Cabin" },
             { "CommunityCenter", "Community Center" },
             { "Coop", "Farm Coop" },
-            { "Farm", Game1.player.farmName.Value + " Farm" },
+            { "Farm", Game1.player.farmName?.Value + " Farm" },
             { "FarmCave", "Farm Cave" },
             { "FarmHouse", "Farm House" },
             { "FishShop", "Fishing Shop" },

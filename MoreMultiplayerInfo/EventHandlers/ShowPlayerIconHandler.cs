@@ -2,6 +2,7 @@
 using MoreMultiplayerInfo.Helpers;
 using StardewModdingAPI;
 using StardewValley;
+using System.Linq;
 
 namespace MoreMultiplayerInfo
 {
@@ -27,7 +28,7 @@ namespace MoreMultiplayerInfo
 
         private void SaveEvents_AfterLoad(object sender, System.EventArgs e)
         {
-            if (Context.IsMultiplayer || !ConfigHelper.GetOptions().HideInSinglePlayer)
+            if ((Context.IsMultiplayer || !ConfigHelper.GetOptions().HideInSinglePlayer) && Game1.onScreenMenus.All(t => t.GetType() != typeof(PlayerIconMenu)))
             {
                 Game1.onScreenMenus.Add(_iconMenu);
             }

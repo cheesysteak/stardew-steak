@@ -1,16 +1,19 @@
 ﻿using MoreMultiplayerInfo.Helpers;
+using Netcode;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
 
 namespace MoreMultiplayerInfo.EventHandlers
 {
     public class PlayerStateWatcher
     {
+        private readonly IModHelper _helper;
+        private readonly IMonitor _monitor;
+
         public class PlayerLastActivity
         {
             private static Dictionary<string, string> ActivityDisplayNames => new Dictionary<string, string>
@@ -39,7 +42,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             public int When { get; set; }
 
-            public Vector2 PositionBeforeEvent { get; set; }
+            public bool Hidden { get; set; }
 
             private int WhenInMinutes => GameTimeHelper.GameTimeToMinutes(When);            
 
@@ -53,11 +56,12 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             private int MinutesSinceWhen => GameTimeHelper.GameTimeToMinutes(Game1.timeOfDay) - WhenInMinutes;
 
+            
+
             public string GetDisplayText()
             {
                 return $"Last Activity: {GetActivityDisplay()}";
             }
-
 
             private string GetActivityDisplay()
             {
@@ -98,8 +102,9 @@ namespace MoreMultiplayerInfo.EventHandlers
 
         public static Dictionary<long, PlayerLastActivity> LastActions { get; set; }
 
-        public PlayerStateWatcher()
+        public PlayerStateWatcher(IModHelper helper)
         {
+            _helper = helper;
             LastActions = new Dictionary<long, PlayerLastActivity>();
             GameEvents.EighthUpdateTick += WatchPlayerActions;
         }
@@ -118,43 +123,71 @@ namespace MoreMultiplayerInfo.EventHandlers
                 
                 var currentLocation = player.currentLocation.name;
 
-                if (currentLocation != LastActions[playerId].LocationName)
-                {
-                    LastActions[playerId] = new PlayerLastActivity
-                    {
-                        Activity = "warped",
-                        LocationName = currentLocation,
-                        When = Game1.timeOfDay,
-                        PositionBeforeEvent = player.positionBeforeEvent
-                    };
-                    continue;
-                }
+                if (CheckCutscene(player, playerId, currentLocation)) continue;
 
-                if (player.UsingTool)
-                {
-                    LastActions[playerId] = new PlayerLastActivity
-                    {
-                        Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
-                        When = Game1.timeOfDay,
-                        LocationName = currentLocation,
-                        PositionBeforeEvent = player.positionBeforeEvent
-                    };
-                    continue;
-                }
+                if (CheckLocationChange(currentLocation, playerId)) continue;
 
-                if (player.positionBeforeEvent != new Vector2() && player.positionBeforeEvent != LastActions[playerId].PositionBeforeEvent)
-                {
-                    
-                    LastActions[playerId] = new PlayerLastActivity
-                    {
-                        Activity = "event",
-                        When = Game1.timeOfDay,
-                        LocationName = currentLocation,
-                        PositionBeforeEvent = player.positionBeforeEvent
-                    };
-                    continue;
-                }
+                if (CheckUsingTool(player, playerId, currentLocation)) continue;
+
+
             }
+        }
+
+        private static bool CheckUsingTool(Farmer player, NetLong playerId, NetString currentLocation)
+        {
+            if (player.UsingTool)
+            {
+                LastActions[playerId] = new PlayerLastActivity
+                {
+                    Activity = player.CurrentTool?.Name.ToLower() ?? "N/A",
+                    When = Game1.timeOfDay,
+                    LocationName = currentLocation,
+                    Hidden = player.hidden.Value
+                };
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool CheckLocationChange(NetString currentLocation, NetLong playerId)
+        {
+            if (currentLocation != LastActions[playerId].LocationName)
+            {
+                LastActions[playerId] = new PlayerLastActivity
+                {
+                    Activity = "warped",
+                    LocationName = currentLocation,
+                    When = Game1.timeOfDay,
+                };
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckCutscene(Farmer player, NetLong playerId, NetString currentLocation)
+        {
+            if (player.hidden != LastActions[playerId].Hidden && !(player.isRidingHorse()))
+            {
+                if (ConfigHelper.GetOptions().ShowCutsceneInfoInChatBox)
+                {
+                    var verbed = player.hidden ? "entered a" : "finished the";
+                    _helper.SelfInfoMessage($"{player.Name} has {verbed} cutscene.");
+                }
+
+                LastActions[playerId] = new PlayerLastActivity
+                {
+                    Activity = "event",
+                    When = Game1.timeOfDay,
+                    LocationName = currentLocation,
+                    Hidden = player.hidden.Value
+                };
+
+                return true;
+            }
+
+            return false;
         }
 
         public static PlayerLastActivity GetLastActionForPlayer(long playerId)

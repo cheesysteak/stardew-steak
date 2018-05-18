@@ -34,6 +34,13 @@ namespace MoreMultiplayerInfo
         {
             if (!Context.IsWorldReady) return;
 
+            if (ReadyPlayers == null || ReadyChecks == null)
+            {
+                _monitor.Log($"Ready Players or Ready Checks was null!", LogLevel.Trace);
+                ReadyPlayers = new Dictionary<long, HashSet<string>>();
+                ReadyChecks = new Dictionary<string, HashSet<long>>();
+            }
+
             var readyPlayersBefore = new Dictionary<long, HashSet<string>>(ReadyPlayers);
 
             UpdateReadyChecksAndReadyPlayers();
@@ -72,7 +79,6 @@ namespace MoreMultiplayerInfo
 
                 if (newCheck != null && newCheck != "wakeup")
                 {
-
                     if (options.ShowReadyInfoInChatBox)
                     {
                         _helper.SelfInfoMessage($"{playerName} is now ready {GetFriendlyReadyCheckName(newCheck)}.");
@@ -148,12 +154,14 @@ namespace MoreMultiplayerInfo
         {
             var map = new Dictionary<string, string>
             {
-                { "festivalStart", $"for {Game1.CurrentEvent.FestivalName}" },
+                { "festivalStart", $"for {Game1.CurrentEvent?.FestivalName ?? "the festival"}" },
                 { "festivalEnd", "to leave" },
                 { "sleep", "to sleep" },
                 { "wakeup", "to wake up" },
                 { "passOut", "to pass out" }
             };
+
+            _monitor.Log($"Getting ready check friendly name: {readyCheckName}", LogLevel.Debug);
 
             if (map.ContainsKey(readyCheckName))
             {
