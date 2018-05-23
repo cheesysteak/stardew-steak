@@ -283,12 +283,18 @@ namespace MoreMultiplayerInfo
 
         private void UnloadMenu(bool playSound)
         {
+            this.exitFunction = new IClickableMenu.onExit(() =>
+            {
+                // do something here
+            });
+
             this.exitThisMenu(playSound);
 
             Game1.onScreenMenus.Remove(this);
             GraphicsEvents.Resize -= Resize;
         }
+        
 
-
+        
     }
 }

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace MoreMultiplayerInfo
+namespace MoreMultiplayerInfo.EventHandlers
 {
     public class ReadyCheckHandler
     {
@@ -50,7 +50,7 @@ namespace MoreMultiplayerInfo
 
         private void WarnIfIAmLastPlayerReady(string readyCheck)
         {
-            var readyPlayers = ReadyChecks[readyCheck];
+            var readyPlayers = ReadyChecks.GetOrCreateDefault(readyCheck);
 
             if (Game1.numberOfPlayers() - 1 == readyPlayers.Count && !readyPlayers.Contains(Game1.player.UniqueMultiplayerID))
             {
@@ -88,6 +88,8 @@ namespace MoreMultiplayerInfo
                     {
                         WarnIfIAmLastPlayerReady(newCheck);
                     }
+
+
                 }
 
                 if (removedCheck != null && removedCheck != "wakeup" && options.ShowReadyInfoInChatBox)
@@ -104,7 +106,7 @@ namespace MoreMultiplayerInfo
             var readyChecksResult = new Dictionary<string, HashSet<long>>();
             var readyPlayersResult = new Dictionary<long, HashSet<string>>();
 
-            var allPlayerIds = Game1.getAllFarmers().Select(f => f.UniqueMultiplayerID);
+            var allPlayerIds = Game1.getAllFarmers()?.Select(f => f.UniqueMultiplayerID) ?? new List<long>();
 
             foreach (var player in allPlayerIds)
             {
@@ -122,8 +124,8 @@ namespace MoreMultiplayerInfo
 
         private void ProcessReadyCheck(object readyCheck, Dictionary<string, HashSet<long>> readyChecks, Dictionary<long, HashSet<string>> readyPlayers)
         {
-            var readyCheckName = _helper.Reflection.GetProperty<string>(readyCheck, "Name").GetValue();
-            var readyPlayersCollection = _helper.Reflection.GetField<NetFarmerCollection>(readyCheck, "readyPlayers").GetValue();
+            var readyCheckName = _helper.Reflection.GetProperty<string>(readyCheck, "Name").GetValue() ?? string.Empty;
+            var readyPlayersCollection = _helper.Reflection.GetField<NetFarmerCollection>(readyCheck, "readyPlayers").GetValue() ?? new NetFarmerCollection();
 
             var readyPlayersIds = new HashSet<long>(readyPlayersCollection.Select(p => p.UniqueMultiplayerID).Distinct());
 
@@ -138,11 +140,11 @@ namespace MoreMultiplayerInfo
         private List<object> GetReadyChecks()
         {
             var readyChecksField = _helper.Reflection.GetField<object>(Game1.player.team, "readyChecks");
-            var readyChecksValue = readyChecksField.GetValue();
-            var readyChecksValueType = readyChecksValue.GetType();
+            var readyChecksValue = readyChecksField?.GetValue();
+            var readyChecksValueType = readyChecksValue?.GetType();
 
-            var readyChecksValueTypeValues = ((IEnumerable<object>) readyChecksValueType.GetProperty("Values").GetValue(readyChecksValue)).ToList();
-            return readyChecksValueTypeValues;
+            var readyChecksValueTypeValues = (IEnumerable<object>) readyChecksValueType?.GetProperty("Values")?.GetValue(readyChecksValue) ?? Enumerable.Empty<object>();
+            return readyChecksValueTypeValues.ToList();
         }
 
         public bool IsPlayerWaiting(long playerId)
