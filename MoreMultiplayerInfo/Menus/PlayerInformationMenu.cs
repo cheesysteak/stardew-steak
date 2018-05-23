@@ -230,18 +230,14 @@ namespace MoreMultiplayerInfo
             HoveredItem = null;
             HoverText = string.Empty;
 
-            if (_inventory.isWithinBounds(x, y))
+            if (_inventory != null && _inventory.isWithinBounds(x, y))
             {
                 SetHoverTextFromInventory(x, y);
             }
 
-            if (_optionsIcon.containsPoint(x, y))
+            if (_optionsIcon != null && _optionsIcon.containsPoint(x, y))
             {
                 HoverText = "Configure Mod Settings";
-            }
-
-            if (_optionsIcon.containsPoint(x, y))
-            {
                 Game1.mouseCursor = 9;
             }
 
@@ -252,7 +248,7 @@ namespace MoreMultiplayerInfo
         {
             foreach (ClickableComponent c in _inventory.inventory)
             {
-                if (c.containsPoint(x, y))
+                if (c != null && c.containsPoint(x, y))
                 {
                     var item = _inventory.getItemFromClickableComponent(c);
                     if (item == null)

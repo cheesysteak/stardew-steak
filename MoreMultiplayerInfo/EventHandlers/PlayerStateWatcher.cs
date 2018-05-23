@@ -12,7 +12,6 @@ namespace MoreMultiplayerInfo.EventHandlers
     public class PlayerStateWatcher
     {
         private readonly IModHelper _helper;
-        private readonly IMonitor _monitor;
 
         public class PlayerLastActivity
         {
@@ -65,9 +64,18 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             private string GetActivityDisplay()
             {
+                if (string.IsNullOrEmpty(Activity))
+                {
+                    Activity = "Something suspicious";
+
+                    return Activity;
+                }
+
                 if (MinutesSinceWhen >= TwoHours)
                 {
-                    return "Nothing noteworthy";
+                    Activity = "Nothing noteworthy";
+
+                    return Activity;
                 }
 
                 if (ActivityDisplayNames.Keys.Any(k => Activity.Contains(k)))
@@ -121,7 +129,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
                 LastActions.GetOrCreateDefault(playerId);
                 
-                var currentLocation = player.currentLocation.name;
+                var currentLocation = player.currentLocation?.name ?? new NetString("(unknown location)");
 
                 if (CheckCutscene(player, playerId, currentLocation)) continue;
 
@@ -159,6 +167,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                     Activity = "warped",
                     LocationName = currentLocation,
                     When = Game1.timeOfDay,
+                    Hidden = false
                 };
                 return true;
             }
@@ -181,7 +190,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                     Activity = "event",
                     When = Game1.timeOfDay,
                     LocationName = currentLocation,
-                    Hidden = player.hidden.Value
+                    Hidden = player.hidden?.Value ?? false
                 };
 
                 return true;
