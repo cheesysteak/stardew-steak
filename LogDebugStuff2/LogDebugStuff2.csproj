@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Netcode">
-      <HintPath>..\..\..\..\SteamGames\steamapps\common\Stardew Valley\Netcode.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Downloads\MoreMultiplayerInfo-2173-1-0-1\MoreMultiplayerInfo\Netcode.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
