@@ -49,9 +49,9 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             private int OneHourSpan => 60;
 
-            private int HalfHour => OneHourSpan / 2;
+            private int ShortSpan => OneHourSpan / 4;
 
-            private int TwoHours => OneHourSpan * 2;
+            private double LongSpan => OneHourSpan * 1.5;
 
             private int MinutesSinceWhen => GameTimeHelper.GameTimeToMinutes(Game1.timeOfDay) - WhenInMinutes;
 
@@ -71,7 +71,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                     return Activity;
                 }
 
-                if (MinutesSinceWhen >= TwoHours)
+                if (MinutesSinceWhen >= LongSpan)
                 {
                     Activity = "Nothing noteworthy";
 
@@ -88,7 +88,7 @@ namespace MoreMultiplayerInfo.EventHandlers
 
             public string GetWhenDisplay()
             {
-                if (MinutesSinceWhen <= HalfHour)
+                if (MinutesSinceWhen <= ShortSpan)
                 {
                     return "just now";
                 }
@@ -98,7 +98,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                     return $"{MinutesSinceWhen} minutes ago";
                 }
 
-                if (MinutesSinceWhen < TwoHours)
+                if (MinutesSinceWhen < LongSpan)
                 {
                     return "one hour ago";
                 }
