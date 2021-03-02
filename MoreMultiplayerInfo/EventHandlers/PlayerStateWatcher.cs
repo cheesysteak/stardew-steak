@@ -131,8 +131,6 @@ namespace MoreMultiplayerInfo.EventHandlers
                 
                 var currentLocation = player.currentLocation?.name ?? new NetString("(unknown location)");
 
-                if (CheckCutscene(player, playerId, currentLocation)) continue;
-
                 if (CheckLocationChange(currentLocation, playerId)) continue;
 
                 if (CheckUsingTool(player, playerId, currentLocation)) continue;
@@ -169,30 +167,6 @@ namespace MoreMultiplayerInfo.EventHandlers
                     When = Game1.timeOfDay,
                     Hidden = false
                 };
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool CheckCutscene(Farmer player, NetLong playerId, NetString currentLocation)
-        {
-            if (player.hidden != LastActions[playerId].Hidden && !(player.isRidingHorse()))
-            {
-                if (ConfigHelper.GetOptions().ShowCutsceneInfoInChatBox)
-                {
-                    var verbed = player.hidden ? "entered a" : "finished the";
-                    _helper.SelfInfoMessage($"{player.Name} has {verbed} cutscene.");
-                }
-
-                LastActions[playerId] = new PlayerLastActivity
-                {
-                    Activity = "event",
-                    When = Game1.timeOfDay,
-                    LocationName = currentLocation,
-                    Hidden = player.hidden?.Value ?? false
-                };
-
                 return true;
             }
 
