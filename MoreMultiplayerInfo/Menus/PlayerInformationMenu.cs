@@ -50,7 +50,7 @@ namespace MoreMultiplayerInfo
             PlayerId = playerUniqueMultiplayerId;
             _helper = helper;
 
-            GraphicsEvents.Resize += Resize;
+            helper.Events.Display.WindowResized += Resize;
 
                 _configOptions = ConfigHelper.GetOptions();
 
@@ -287,7 +287,7 @@ namespace MoreMultiplayerInfo
             this.exitThisMenu(playSound);
 
             Game1.onScreenMenus.Remove(this);
-            GraphicsEvents.Resize -= Resize;
+            _helper.Events.Display.WindowResized -= Resize;
         }
         
 

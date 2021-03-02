@@ -33,7 +33,7 @@ namespace MoreMultiplayerInfo.EventHandlers
                 { "pole", "Went fishing" },
                 { "rod", "Went fishing" },
                 { "slingshot", "Fired a slingshot" },
-                { "event", "Watching a cutscene" },
+                { "event", "Switched areas?" },
             };
 
 
@@ -114,7 +114,7 @@ namespace MoreMultiplayerInfo.EventHandlers
         {
             _helper = helper;
             LastActions = new Dictionary<long, PlayerLastActivity>();
-            GameEvents.EighthUpdateTick += WatchPlayerActions;
+            _helper.Events.GameLoop.UpdateTicked += WatchPlayerActions;
         }
 
         private void WatchPlayerActions(object sender, EventArgs e)
